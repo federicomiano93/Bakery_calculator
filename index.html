@@ -297,7 +297,7 @@
       <div class="product-row">
         <span class="product-label">Tray focaccia</span>
         <input type="number" id="f-trayfocaccia" value="0" min="0" inputmode="numeric" oninput="calcFocaccia()">
-        <span class="unit">g</span>
+        <span class="unit">pz</span>
       </div>
       <div class="product-row">
         <span class="product-label">Buns</span>
@@ -317,6 +317,15 @@
         <span class="product-label">Panini</span>
         <input type="number" id="f-panini" value="0" min="0" inputmode="numeric" oninput="calcFocaccia()">
         <span class="unit">pz</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Extra dough</div>
+      <div class="product-row">
+        <span class="product-label">Kg</span>
+        <input type="number" id="f-kg" value="0" min="0" step="0.5" inputmode="decimal" oninput="calcFocaccia()">
+        <span class="unit">kg</span>
       </div>
     </div>
 
@@ -380,6 +389,15 @@
         <span class="product-label">Rolls</span>
         <input type="number" id="b-rolls" value="0" min="0" inputmode="numeric" oninput="calcBrioche()">
         <span class="unit">pz</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Extra dough</div>
+      <div class="product-row">
+        <span class="product-label">Kg</span>
+        <input type="number" id="b-kg" value="0" min="0" step="0.5" inputmode="decimal" oninput="calcBrioche()">
+        <span class="unit">kg</span>
       </div>
     </div>
 
@@ -526,7 +544,7 @@ function hideResult(id) { document.getElementById(id).classList.remove('visible'
 // Reset
 function resetTab(tab) {
   document.querySelectorAll('#tab-'+tab+' input[type="number"]').forEach(input => {
-    const defaults = { 'f-yeast-pct':'0.65', 'b-yeast-pct':'4', 's-starter-pct':'18', 's-weight':'905' };
+    const defaults = { 'f-yeast-pct':'0.65', 'b-yeast-pct':'4', 's-starter-pct':'18', 's-weight':'905', 'f-kg':'0', 'b-kg':'0' };
     input.value = defaults[input.id] || '0';
   });
   if (tab === 'focaccia') calcFocaccia();
@@ -541,13 +559,14 @@ function calcFocaccia() {
   const burgerbuns   = +document.getElementById('f-burgerbuns').value || 0;
   const subrolls     = +document.getElementById('f-subrolls').value || 0;
   const ciabatta     = +document.getElementById('f-ciabatta').value || 0;
-  const tray         = +document.getElementById('f-trayfocaccia').value || 0;
+  const tray         = +document.getElementById("f-trayfocaccia").value || 0;
   const bun          = +document.getElementById('f-bun').value || 0;
   const rolls        = +document.getElementById('f-rolls').value || 0;
   const panini       = +document.getElementById('f-panini').value || 0;
   const yeastPct     = +document.getElementById('f-yeast-pct').value || 0.65;
 
-  const total = pizze*201 + focacce*181 + burgerbuns*91 + subrolls*121 + ciabatta*151 + tray + bun*101 + rolls*101 + panini*131;
+  const kg_f        = +document.getElementById('f-kg').value || 0;
+  const total = pizze*201 + focacce*181 + burgerbuns*91 + subrolls*121 + ciabatta*151 + tray*1800 + bun*101 + rolls*101 + panini*131 + kg_f*1000;
   if (total === 0) { hideResult('focaccia-result'); return; }
 
   const scale   = total / 1003.12;
@@ -582,10 +601,11 @@ function calcBrioche() {
   const rolls      = +document.getElementById('b-rolls').value || 0;
   const yeastPct   = +document.getElementById('b-yeast-pct').value || 4;
 
-  const totalPcs = burgerbuns*20 + subrolls*20 + bun*10 + rolls*10;
+  const kg_b      = +document.getElementById('b-kg').value || 0;
+  const totalPcs = burgerbuns*81 + subrolls*121 + bun*71 + rolls*71 + kg_b*1000;
   if (totalPcs === 0) { hideResult('brioche-result'); return; }
 
-  const scale = totalPcs / 60;
+  const scale = totalPcs / 4887.4;
   const flour = 3185 * scale;
   const yeast = 127.4 * (yeastPct / 4) * scale;
   const water = 1575 * scale;
@@ -611,7 +631,7 @@ function calcSourdough() {
   if (loaves === 0) { hideResult('sourdough-result'); return; }
 
   const target  = loaves * weight;
-  const scale   = target / 21720;
+  const scale   = target / 10968;
   const flu     = 2560 * scale;
   const flt     = 2560 * scale;
   const flw     = 570 * scale;
