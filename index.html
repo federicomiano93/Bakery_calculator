@@ -378,7 +378,7 @@
 
     <div class="section-label">Parameters</div>
     <div class="param-row">
-      <span class="param-label">Yeast %</span>
+      <span class="param-label">Yeast % (<span id="f-yeast-display">0.65</span>%)</span>
       <div class="qty-group"><input type="number" id="f-yeast-pct" value="0.65" min="0.1" max="3" step="0.05" inputmode="decimal" oninput="calcFocaccia()"><span class="unit">%</span></div>
     </div>
 
@@ -444,7 +444,7 @@
 
     <div class="section-label">Parameters</div>
     <div class="param-row">
-      <span class="param-label">Yeast %</span>
+      <span class="param-label">Yeast % (<span id="b-yeast-display">4</span>%)</span>
       <div class="qty-group"><input type="number" id="b-yeast-pct" value="4" min="0.1" max="6" step="0.1" inputmode="decimal" oninput="calcBrioche()"><span class="unit">%</span></div>
     </div>
 
@@ -631,11 +631,12 @@ function calcFocaccia() {
   const raw     = flu + flt + malt + sugar + salt + yeast + oil + water1 + water2;
 
   document.getElementById('f-ingredients').innerHTML =
-    ing('Flour uniqua blu', flu) + ing('Flour T65', flt) +
+    ing('Flour uniqua blue', flu) + ing('Flour T65', flt) +
     ing('Malt', malt) + ing('Sugar', sugar) + ing('Salt', salt) +
-    ing('Yeast ('+yeastPct+'%)', yeast) + ing('Oil', oil) +
+    ing('Yeast', yeast) + ing('Oil', oil) +
     ing('1° Water', water1) + ing('2° Water', water2);
 
+  document.getElementById('f-yeast-display').textContent = yeastPct;
   document.getElementById('f-badge').textContent = Math.round(raw) + ' g raw';
   document.getElementById('f-total').textContent  = Math.round(raw);
   document.getElementById('f-half').textContent   = Math.round(raw / 2);
@@ -662,9 +663,10 @@ function calcBrioche() {
 
   document.getElementById('b-ingredients').innerHTML =
     ing('Mella brioche pof', flour) +
-    ing('Yeast ('+yeastPct+'%)', yeast) +
-    ing('1° Water', water);
+    ing('Yeast', yeast) +
+    ing('Water', water);
 
+  document.getElementById('b-yeast-display').textContent = yeastPct;
   document.getElementById('b-badge').textContent = Math.round(raw) + ' g raw';
   document.getElementById('b-total').textContent  = Math.round(raw);
   document.getElementById('b-half').textContent   = Math.round(raw / 2);
@@ -692,9 +694,9 @@ function calcSourdough() {
   const raw     = flu + flt + flw + w1 + starter + malt + salt + w2;
 
   document.getElementById('s-ingredients').innerHTML =
-    ing('Flour uniqua blu', flu) + ing('Flour T65', flt) +
+    ing('Flour uniqua blue', flu) + ing('Flour T65', flt) +
     ing('Flour wholemeal', flw) + ing('1° Water', w1) +
-    ing('Starter ('+starterPct+'%)', starter) +
+    ing('Starter', starter) +
     ing('Malt', malt) + ing('Salt', salt) + ing('2° Water', w2);
 
   document.getElementById('s-badge').textContent  = Math.round(raw) + ' g raw';
