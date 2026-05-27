@@ -320,6 +320,11 @@
   <!-- FOCACCIA -->
   <div class="content active" id="tab-focaccia">
 
+    <div class="param-row">
+      <span class="param-label">Yeast % (<span id="f-yeast-display">0.65</span>%)</span>
+      <div class="qty-group"><input type="number" id="f-yeast-pct" value="0.65" min="0.1" max="3" step="0.05" inputmode="decimal" oninput="calcFocaccia()"><span class="unit">%</span></div>
+    </div>
+
     <div class="section-label">Orders</div>
 
     <div class="card">
@@ -366,12 +371,6 @@
       </div>
     </div>
 
-    <div class="section-label">Parameters</div>
-    <div class="param-row">
-      <span class="param-label">Yeast % (<span id="f-yeast-display">0.65</span>%)</span>
-      <div class="qty-group"><input type="number" id="f-yeast-pct" value="0.65" min="0.1" max="3" step="0.05" inputmode="decimal" oninput="calcFocaccia()"><span class="unit">%</span></div>
-    </div>
-
     <div class="result-block" id="focaccia-result">
       <div class="result-card">
         <div class="result-header">
@@ -397,6 +396,11 @@
 
   <!-- BRIOCHE -->
   <div class="content" id="tab-brioche">
+
+    <div class="param-row">
+      <span class="param-label">Yeast % (<span id="b-yeast-display">4</span>%)</span>
+      <div class="qty-group"><input type="number" id="b-yeast-pct" value="4" min="0.1" max="6" step="0.1" inputmode="decimal" oninput="calcBrioche()"><span class="unit">%</span></div>
+    </div>
 
     <div class="section-label">Orders</div>
 
@@ -430,12 +434,6 @@
         <span class="product-label">Kg</span>
         <div class="qty-group"><input type="number" id="b-kg" value="0" min="0" step="0.5" inputmode="decimal" oninput="calcBrioche()"><span class="unit">kg</span></div>
       </div>
-    </div>
-
-    <div class="section-label">Parameters</div>
-    <div class="param-row">
-      <span class="param-label">Yeast % (<span id="b-yeast-display">4</span>%)</span>
-      <div class="qty-group"><input type="number" id="b-yeast-pct" value="4" min="0.1" max="6" step="0.1" inputmode="decimal" oninput="calcBrioche()"><span class="unit">%</span></div>
     </div>
 
     <div class="result-block" id="brioche-result">
