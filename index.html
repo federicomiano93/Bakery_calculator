@@ -1,7 +1,7 @@
 <!--
   BAKERY CALCULATOR PWA
   Repo:   https://github.com/federicomiano93/Bakery_calculator
-  Deploy: https://jade-chimera-c49cdb.netlify.app
+  Deploy: https://federicomiano93.github.io/Bakery_calculator/
 
   ── FOCACCIA ──────────────────────────────────────────────
   Clienti: Bakery, Bone&Block, Club Fish, Cahita
@@ -42,7 +42,7 @@
 
   ── NOTE ──────────────────────────────────────────────────
   Service worker: network-first, controlla aggiornamenti ogni 30s
-  Cache: bakery-v19
+  Cache: bakery-v20
   Icona: pagnotta su sfondo verde scuro, aggiornabile solo reinstallando
 -->
 <!DOCTYPE html>
@@ -611,7 +611,7 @@ document.querySelectorAll('input[type="number"]').forEach(input => {
 
 // Service Worker registration with force-update for iOS
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
 
     // Check for update every 30 seconds (helps iOS)
     setInterval(() => reg.update(), 30000);
