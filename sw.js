@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bakery-v27';
+const CACHE_NAME = 'bakery-v28';
 const ASSETS = [
   './',
   './index.html',
