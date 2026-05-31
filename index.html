@@ -42,7 +42,7 @@
 
   ── NOTE ──────────────────────────────────────────────────
   Service worker: network-first, controlla aggiornamenti ogni 30s
-  Cache: bakery-v31
+  Cache: bakery-v32
   Icona: pagnotta su sfondo verde scuro, aggiornabile solo reinstallando
 -->
 <!DOCTYPE html>
@@ -1178,6 +1178,16 @@ function buildLogText(tab) {
 }
 
 function confirmAndSave(tab) {
+  const btn = document.getElementById(tab[0] + '-confirm-btn');
+  const saveLabel = tab === 'focaccia' ? '✓ Confirm & Save' : 'Confirm & Save';
+
+  // In "Modify" mode: revert to save mode without saving
+  if (btn.dataset.saved === '1') {
+    btn.textContent = saveLabel;
+    btn.dataset.saved = '';
+    return;
+  }
+
   let record;
   if (tab === 'focaccia') {
     const { date, time, text } = buildFocacciaLog();
@@ -1194,10 +1204,13 @@ function confirmAndSave(tab) {
   if (log.length > 3) log = log.slice(-3);
   localStorage.setItem('bakery-log', JSON.stringify(log));
 
-  const btn = document.getElementById(tab[0] + '-confirm-btn');
   btn.textContent = 'Saved!';
   btn.disabled = true;
-  setTimeout(() => { btn.textContent = 'Confirm & Save'; btn.disabled = false; }, 2000);
+  setTimeout(() => {
+    btn.textContent = 'Modify';
+    btn.disabled = false;
+    btn.dataset.saved = '1';
+  }, 1500);
 }
 
 function renderLog() {
