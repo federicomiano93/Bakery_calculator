@@ -42,7 +42,7 @@
 
   ── NOTE ──────────────────────────────────────────────────
   Service worker: network-first, controlla aggiornamenti ogni 30s
-  Cache: bakery-v30
+  Cache: bakery-v31
   Icona: pagnotta su sfondo verde scuro, aggiornabile solo reinstallando
 -->
 <!DOCTYPE html>
@@ -500,7 +500,7 @@
     font-family: 'DM Mono', monospace;
   }
 
-  /* Confirm & Save button */
+  /* Confirm & Save button — default (brioche/sourdough, inside result-card) */
   .confirm-btn {
     width: 100%;
     margin-top: 12px;
@@ -516,6 +516,27 @@
   }
   .confirm-btn:active { background: var(--accent-light); }
   .confirm-btn:disabled { opacity: 0.6; cursor: default; }
+
+  /* Confirm & Save button — prominent standalone (focaccia tab) */
+  .confirm-btn-primary {
+    display: none;
+    width: 100%;
+    margin-top: 14px;
+    padding: 16px;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(45,80,22,0.25);
+  }
+  .confirm-btn-primary.visible { display: block; }
+  .confirm-btn-primary:active { background: #1e3810; box-shadow: none; }
+  .confirm-btn-primary:disabled { opacity: 0.6; cursor: default; }
 
   /* Log tab */
   .log-empty {
@@ -637,6 +658,8 @@
       </div>
     </div>
 
+    <button class="confirm-btn-primary" id="f-confirm-btn" onclick="confirmAndSave('focaccia')">✓ Confirm &amp; Save</button>
+
     <div class="result-block" id="focaccia-result">
       <div class="result-card">
         <div class="result-header">
@@ -655,7 +678,6 @@
             <div><span class="s-val" id="f-half">0</span> <span class="s-unit">g</span></div>
           </div>
         </div>
-        <button class="confirm-btn" id="f-confirm-btn" onclick="confirmAndSave('focaccia')">Confirm &amp; Save</button>
       </div>
     </div>
 
@@ -913,7 +935,7 @@ function calcFocaccia() {
   const kg_f     = +document.getElementById('f-kg').value || 0;
 
   const target = pizze*201 + focacce*181 + ciabatta*151 + tray*1800 + panini*131 + kg_f*1000;
-  if (target === 0) { hideResult('focaccia-result'); return; }
+  if (target === 0) { hideResult('focaccia-result'); document.getElementById('f-confirm-btn').classList.remove('visible'); return; }
 
   const R = RECIPES.focaccia;
   const base_total = recipeTotal(R);
@@ -946,6 +968,7 @@ function calcFocaccia() {
   document.getElementById('f-badge').textContent = Math.round(target) + ' g raw';
   document.getElementById('f-total').textContent  = Math.round(target);
   document.getElementById('f-half').textContent   = Math.round(target / 2);
+  document.getElementById('f-confirm-btn').classList.add('visible');
   showResult('focaccia-result');
 }
 
