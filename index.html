@@ -42,7 +42,7 @@
 
   ── NOTE ──────────────────────────────────────────────────
   Service worker: network-first, controlla aggiornamenti ogni 30s
-  Cache: bakery-v37
+  Cache: bakery-v38
   Icona: pagnotta su sfondo verde scuro, aggiornabile solo reinstallando
 -->
 <!DOCTYPE html>
@@ -1136,56 +1136,47 @@ function buildFocacciaLog() {
   const tray     = +document.getElementById('f-trayfocaccia').value || 0;
   const panini   = +document.getElementById('f-panini').value || 0;
   const kg_f     = +document.getElementById('f-kg').value || 0;
-  const total    = parseInt(document.getElementById('f-total').textContent, 10);
 
-  function row(label, val, unit) {
-    return ('  ' + label + ':').padEnd(22) + String(val).padStart(4) + ' ' + unit;
+  const lines = [];
+  if (pizze > 0 || focacce > 0) {
+    lines.push('Bakery:');
+    if (pizze > 0)   lines.push('  Pizzas: ' + pizze + ' pz');
+    if (focacce > 0) lines.push('  Focaccias: ' + focacce + ' pz');
   }
-  const lines = [`📅 ${date} — ${time}`, '', 'FOCACCIA — production log'];
-
-  const bakery = [];
-  if (pizze > 0)   bakery.push(row('Pizzas', pizze, 'pz'));
-  if (focacce > 0) bakery.push(row('Focaccias', focacce, 'pz'));
-  if (bakery.length) { lines.push('', 'Bakery:', ...bakery); }
-  if (ciabatta > 0) lines.push('', 'Bone&Block:', row('Ciabatta', ciabatta, 'pz'));
-  if (tray > 0)     lines.push('', 'Club Fish:', row('Tray focaccia', tray, 'pz'));
-  if (panini > 0)   lines.push('', 'Cahita:', row('Panini', panini, 'pz'));
-  if (kg_f > 0)     lines.push('', ('Extra dough:').padEnd(20) + String(kg_f).padStart(6) + ' kg');
-  lines.push('', ('Total raw dough:').padEnd(20) + total.toLocaleString('en-GB').padStart(6) + ' g');
+  if (ciabatta > 0) { lines.push('Bone&Block:'); lines.push('  Ciabatta: ' + ciabatta + ' pz'); }
+  if (tray > 0)     { lines.push('Club Fish:');  lines.push('  Tray focaccia: ' + tray + ' pz'); }
+  if (panini > 0)   { lines.push('Cahita:');     lines.push('  Panini: ' + panini + ' pz'); }
+  if (kg_f > 0)     lines.push('Extra dough: ' + kg_f + ' kg');
 
   return { date, time, text: lines.join('\n') };
 }
 
 function buildLogText(tab) {
   const { date, time } = logTimestamp();
-  const SEP = '─'.repeat(29);
-  function fmtLine(name, val) { return (name + ':').padEnd(22) + String(val).padStart(5) + ' g'; }
-  function readIng(prefix, pctName, pctVal) {
-    const lines = [];
-    document.querySelectorAll('#' + prefix + '-ingredients .ing-row').forEach(row => {
-      let name = row.querySelector('.ing-name').textContent.trim();
-      const val = parseInt(row.querySelector('.ing-val').textContent, 10);
-      if (pctName && name === pctName) name += ' (' + pctVal + '%)';
-      lines.push(fmtLine(name, val));
-    });
-    return lines;
-  }
-  let body = '';
+  const lines = [];
   if (tab === 'brioche') {
-    const total = parseInt(document.getElementById('b-total').textContent, 10);
-    const half  = parseInt(document.getElementById('b-half').textContent, 10);
-    const pct   = document.getElementById('b-yeast-display').textContent;
-    body = ['BRIOCHE DOUGH — ' + (total/1000).toFixed(1) + ' kg', SEP,
-      ...readIng('b', 'Yeast', pct), SEP, fmtLine('Total raw', total), fmtLine('÷ 2', half)].join('\n');
+    const burgerbuns = +document.getElementById('b-burgerbuns').value || 0;
+    const subrolls   = +document.getElementById('b-subrolls').value || 0;
+    const bun        = +document.getElementById('b-bun').value || 0;
+    const rolls      = +document.getElementById('b-rolls').value || 0;
+    const kg_b       = +document.getElementById('b-kg').value || 0;
+    if (burgerbuns > 0 || subrolls > 0) {
+      lines.push('Bone&Block:');
+      if (burgerbuns > 0) lines.push('  Burger buns: ' + burgerbuns + ' pz');
+      if (subrolls > 0)   lines.push('  Sub rolls: ' + subrolls + ' pz');
+    }
+    if (bun > 0 || rolls > 0) {
+      lines.push('Club Fish:');
+      if (bun > 0)   lines.push('  Buns: ' + bun + ' pz');
+      if (rolls > 0) lines.push('  Rolls: ' + rolls + ' pz');
+    }
+    if (kg_b > 0) lines.push('Extra dough: ' + kg_b + ' kg');
   } else {
-    const total = parseInt(document.getElementById('s-total').textContent, 10);
-    const div   = document.getElementById('s-div').textContent.trim();
-    const pct   = document.getElementById('s-starter-pct').value;
-    body = ['SOURDOUGH BREAD — ' + (total/1000).toFixed(1) + ' kg', SEP,
-      ...readIng('s', 'Starter', pct), SEP, fmtLine('Total raw', total),
-      '÷2 / ÷3:' + ' '.repeat(14) + div].join('\n');
+    const loaves = +document.getElementById('s-loaves').value || 0;
+    const weight = +document.getElementById('s-weight').value || 905;
+    if (loaves > 0) lines.push('Loaves: ' + loaves + ' pz (' + weight + ' g each)');
   }
-  return { date, time, text: `📅 ${date} — ${time}\n\n${body}` };
+  return { date, time, text: lines.join('\n') };
 }
 
 function confirmAndSave(tab) {
@@ -1237,7 +1228,6 @@ function renderLog() {
   container.innerHTML = sorted.map(r =>
     `<div class="card">
       <div class="card-title">${r.dough}</div>
-      <div class="log-timestamp">📅 ${r.date} — ${r.time}</div>
       <pre class="log-pre">${r.text}</pre>
     </div>`
   ).join('');
