@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 import { getFirestore, enableIndexedDbPersistence, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "REVOKED_API_KEY",
+  apiKey: "AIzaSyB0h112KenmhJNQJGikLGU3RSH-KyAOA9Q",
   authDomain: "bakery-app-ebf90.firebaseapp.com",
   projectId: "bakery-app-ebf90",
   storageBucket: "bakery-app-ebf90.firebasestorage.app",
