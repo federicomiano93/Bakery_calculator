@@ -42,7 +42,7 @@
 
   ── NOTE ──────────────────────────────────────────────────
   Service worker: network-first, controlla aggiornamenti ogni 30s
-  Cache: bakery-v48
+  Cache: bakery-v49
   Icona: pagnotta su sfondo verde scuro, aggiornabile solo reinstallando
 -->
 <!DOCTYPE html>
@@ -538,6 +538,71 @@
   .confirm-btn-primary.visible { display: block; }
   .confirm-btn-primary:active { background: #1e3810; box-shadow: none; }
   .confirm-btn-primary:disabled { opacity: 0.6; cursor: default; }
+
+  /* Loaf modal */
+  #loaf-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #loaf-modal.visible { display: flex; }
+  #loaf-modal-box {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px 24px 24px;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+  }
+  .loaf-modal-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .loaf-modal-sub { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+  #loaf-qty-input {
+    width: 100%;
+    font-size: 52px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    color: var(--text);
+    background: var(--surface2);
+    margin-bottom: 20px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  #loaf-qty-input::-webkit-inner-spin-button,
+  #loaf-qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  #loaf-qty-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .loaf-modal-actions { display: flex; gap: 10px; }
+  .loaf-modal-cancel {
+    flex: 1;
+    padding: 13px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text2);
+    cursor: pointer;
+  }
+  .loaf-modal-send {
+    flex: 2;
+    padding: 13px;
+    background: #25D366;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+  }
 
   /* Log tab */
   .log-customer {
@@ -1416,20 +1481,31 @@ const MARKET_CLIENTS = [
 ];
 
 function shareMarketOrder() {
+  document.getElementById('loaf-qty-input').value = '0';
+  document.getElementById('loaf-modal').classList.add('visible');
+  setTimeout(() => { document.getElementById('loaf-qty-input').select(); }, 100);
+}
+
+function closeLoafModal() {
+  document.getElementById('loaf-modal').classList.remove('visible');
+}
+
+function sendWithLoaves() {
+  const loaves = +document.getElementById('loaf-qty-input').value || 0;
+  closeLoafModal();
+
   const sections = MARKET_CLIENTS
     .map(client => {
       const lines = client.products
         .map(([id, label]) => ({ label, val: +document.getElementById(id).value || 0 }))
         .filter(p => p.val > 0)
         .map(p => `- ${p.label}: ${p.val}`);
+      if (client.name === 'Club Fish' && loaves > 0) lines.push(`- Loaf of bread: ${loaves}`);
       return lines.length ? `*${client.name}*\n` + lines.join('\n') : null;
     })
     .filter(Boolean);
 
-  if (!sections.length) {
-    alert('No orders to share');
-    return;
-  }
+  if (!sections.length) { alert('No orders to share'); return; }
 
   const text = '📋 *Duke Street Market order*\n\n' + sections.join('\n\n');
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
@@ -1567,5 +1643,17 @@ function closeRecipes() {
   document.getElementById('recipe-overlay').classList.remove('visible');
 }
 </script>
+
+<div id="loaf-modal">
+  <div id="loaf-modal-box">
+    <div class="loaf-modal-title">Loaf of bread</div>
+    <div class="loaf-modal-sub">Club Fish</div>
+    <input type="number" id="loaf-qty-input" value="0" min="0" inputmode="numeric">
+    <div class="loaf-modal-actions">
+      <button class="loaf-modal-cancel" onclick="closeLoafModal()">Cancel</button>
+      <button class="loaf-modal-send" onclick="sendWithLoaves()">📤 Send</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
