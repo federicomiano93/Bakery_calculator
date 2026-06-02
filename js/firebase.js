@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB0h112KenmhJNQJGikLGU3RSH-KyAOA9Q",
@@ -15,7 +15,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 enableIndexedDbPersistence(db).catch(() => {});
-signInAnonymously(auth).catch(() => {});
+
+// Start Firestore listener only after auth token is available
+signInAnonymously(auth).then(() => {
+  onSnapshot(collection(db, 'log'), (snapshot) => {
+    const log = [];
+    snapshot.forEach(d => log.push(d.data()));
+    window.firestoreLog = log;
+    document.dispatchEvent(new CustomEvent('firestore-log-updated'));
+  });
+}).catch(() => {});
 
 export async function saveLogToFirestore(record) {
   try {
@@ -32,10 +41,3 @@ export async function deleteLogFromFirestore(dough) {
     console.error('Firestore delete error:', e);
   }
 }
-
-onSnapshot(collection(db, 'log'), (snapshot) => {
-  const log = [];
-  snapshot.forEach(d => log.push(d.data()));
-  window.firestoreLog = log;
-  document.dispatchEvent(new CustomEvent('firestore-log-updated'));
-});
