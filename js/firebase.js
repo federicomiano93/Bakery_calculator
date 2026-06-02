@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB0h112KenmhJNQJGikLGU3RSH-KyAOA9Q",
@@ -12,7 +13,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 enableIndexedDbPersistence(db).catch(() => {});
+signInAnonymously(auth).catch(() => {});
 
 export async function saveLogToFirestore(record) {
   try {
