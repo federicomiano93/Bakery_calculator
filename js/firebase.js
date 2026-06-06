@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { getFirestore, enableIndexedDbPersistence, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, enableIndexedDbPersistence, collection, doc, setDoc, deleteDoc, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -39,5 +39,17 @@ export async function deleteLogFromFirestore(dough) {
     await deleteDoc(doc(db, 'log', dough.toLowerCase()));
   } catch(e) {
     console.error('Firestore delete error:', e);
+  }
+}
+
+export async function saveDailyEntry(entry) {
+  try {
+    const dateStr = entry.date_iso;
+    await setDoc(doc(db, 'daily-logs', dateStr), {
+      date: dateStr,
+      entries: arrayUnion(entry)
+    }, { merge: true });
+  } catch(e) {
+    console.error('Firestore daily-log save error:', e);
   }
 }
